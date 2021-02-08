@@ -1,9 +1,9 @@
 version: '3.7'
 services:
-    server:
+    web:
         build: .
 
         # Mapping of container port to host
         ports:
-          - "5000:5000"
+          - "${PORT}:5000"
       
