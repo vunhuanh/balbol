@@ -1,0 +1,9 @@
+version: '3.7'
+services:
+    server:
+        build: .
+
+        # Mapping of container port to host
+        ports:
+          - "5000:5000"
+      
