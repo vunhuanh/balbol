@@ -5,4 +5,9 @@ services:
         # Mapping of container port to host
         ports:
           - "${PORT}:5000"
+        environment:
+          ENV: 'DEVELOPMENT'
+          FLASK_ENV: 'development'
+          FLASK_APP: 'app'
+          PYTHONUNBUFFERED: 1
       
