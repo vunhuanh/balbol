@@ -10,4 +10,21 @@ services:
           FLASK_ENV: 'development'
           FLASK_APP: 'app'
           PYTHONUNBUFFERED: 1
+        env_file:
+          - .env
+        depends_on:
+          - "db"
+
+    db:
+        image: postgres:13
+        restart: unless-stopped
+        container_name: balbol_db
+        env_file:
+          - .env
+        ports:
+          - "5432:5432"
+        volumes:
+          - database-data:/var/lib/postgresql/data/
       
+volumes:
+  database-data:

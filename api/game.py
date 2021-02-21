@@ -1,9 +1,22 @@
-from flask import Response, jsonify, current_app
+from flask import Blueprint, Response, jsonify, current_app
 import requests
 from datetime import datetime
+from dateutil import parser
 import pytz
 import json
+import schedule
+import time
+import os
 
+# models
+from models.game import Game
+
+# helper
+import api.email_helper as email
+
+
+game_bp = Blueprint(__name__, "game_bp")
+@game_bp.route("/get_today_games")
 def get_today_games():
     not_found = Response(
         "No games today",
@@ -17,12 +30,26 @@ def get_today_games():
     if response.status_code == 200 and response.content:
         jsonResponse = json.loads(response.content)
         data = jsonResponse['data']
-        print(data)
         if data:
             games = ""
             for game in data:
-                game_obj = "{} vs {} @ {}".format(game['home_team']['full_name'], game['visitor_team']['full_name'], game['status'])
+                game_name = "{} vs {}".format(game['home_team']['full_name'], game['visitor_team']['full_name'])
+                game_time = game['status']
+                game_obj = "{} @ {}".format(game_name, game_time)
                 games += game_obj + "\n"
+
+                # Save to DB
+                try:
+                    time = "{} {}".format(today, game_time)
+                    time = parser.parse(time)
+                    new_game = Game.create_game({
+                        "name": game_name,
+                        "time": time
+                    })
+                except Exception:
+                    print("Error saving game")
+
+            email.send_email("Today's games", games)
             return Response(
                 games,
                 200, 
@@ -39,3 +66,9 @@ def get_today_games():
             mimetype='application/json'
         )
     
+
+if os.environ.get('ENV') == "PRODUCTION":
+    schedule.every().day.at("08:30").do(get_today_games)
+    while True:
+        schedule.run_pending()
+        time.sleep(100)

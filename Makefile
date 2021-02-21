@@ -5,8 +5,9 @@ build:
 	docker-compose -f docker-compose.yml build
 
 start-local:
-	docker-compose -f docker-compose.local.yml up
-	# docker-compose logs -f -t web 
+	docker-compose -f docker-compose.local.yml up 
+	# docker-compose -f docker-compose.local.yml up -d db
+	# docker-compose -f docker-compose.local.yml up web
 
 start-prod:
 	docker-compose -f docker-compose.yml up -d
