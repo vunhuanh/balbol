@@ -1,15 +1,5 @@
 version: '3.7'
 services:
-    web:
-        build: .
-        # Mapping of container port to host
-        ports:
-          - "${PORT}:5000"
-        environment:
-          ENV: 'PRODUCTION'
-        depends_on:
-          - "db"
-
     db:
         image: postgres:13
         restart: unless-stopped

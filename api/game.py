@@ -4,7 +4,6 @@ from datetime import datetime
 from dateutil import parser
 import pytz
 import json
-import schedule
 import time
 import os
 
@@ -66,9 +65,3 @@ def get_today_games():
             mimetype='application/json'
         )
     
-
-if os.environ.get('ENV') == "PRODUCTION":
-    schedule.every().day.at("08:30").do(get_today_games)
-    while True:
-        schedule.run_pending()
-        time.sleep(100)

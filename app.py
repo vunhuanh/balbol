@@ -14,7 +14,6 @@ def create_app():
     app = Flask(__name__)
     app = _setup_db(app)
     _setup_blueprints(app)
-
     @app.route('/')
     def index():
         all_games = Game.query.filter().all()

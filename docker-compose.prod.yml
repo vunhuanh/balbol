@@ -1,24 +1,20 @@
 version: '3.7'
 services:
     web:
-        container_name: web
         build: .
         # Mapping of container port to host
         ports:
           - "${PORT}:5000"
         environment:
-          ENV: 'DEVELOPMENT'
-          FLASK_ENV: 'development'
-          FLASK_APP: 'app'
-          PYTHONUNBUFFERED: 1
+          ENV: 'PRODUCTION'
         env_file:
           - .env
         depends_on:
           - "db"
-        labels:
-          ofelia.enabled: "true"
+        ofelia.enabled: "true"
           ofelia.job-exec.get_today_games.schedule: "@0 30 8 * * *"
-          ofelia.job-exec.get_today_games.command: "sh scripts/get_today_games.sh http://localhost:5000"
+          ofelia.job-exec.get_today_games.command: "sh scripts/get_today_games.sh https://balbol.herokuapp.com"
+
 
     scheduler:
       image: mcuadros/ofelia:latest
@@ -27,5 +23,5 @@ services:
       command: daemon --docker
       volumes:
         - /var/run/docker.sock:/var/run/docker.sock:ro
-
-  
+          
+      
