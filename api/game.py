@@ -1,6 +1,6 @@
 from flask import Blueprint, Response, jsonify, current_app
 import requests
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from dateutil import parser
 import pytz
 import json
@@ -15,6 +15,7 @@ import api.email_helper as email
 
 
 game_bp = Blueprint(__name__, "game_bp")
+
 @game_bp.route("/get_today_games")
 def get_today_games():
     not_found = Response(
@@ -65,3 +66,23 @@ def get_today_games():
             mimetype='application/json'
         )
     
+@game_bp.route("/notify_games")
+def notify_games():
+    games = "Updated\n"
+
+    lower_bound = datetime.now() 
+    upper_bound = datetime.now() + timedelta(minutes=15)
+
+    today_games = Game.query.filter(Game.time.between(lower_bound, upper_bound)).filter(Game.sent_alert != True).all()
+    for game in today_games:
+        gtime = game.time
+        msg = f"{game.name} @ {gtime.strftime('%H:%M')}"
+        games += msg + "\n"
+        email.send_email("Game alert", msg)
+        updatedGame = Game.mark_as_alerted(game.id)
+
+    return Response(
+        games,
+        200, 
+        mimetype='application/json'
+    )

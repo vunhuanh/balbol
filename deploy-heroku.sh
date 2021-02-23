@@ -8,3 +8,7 @@ heroku open --app balbol
 
 # get logs
 # heroku logs --tail -a balbol
+
+# access docker container
+# docker exec -it <container> sh
+# docker exec -tiu postgres balbol_db psql

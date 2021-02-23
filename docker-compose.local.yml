@@ -17,15 +17,18 @@ services:
           - "db"
         labels:
           ofelia.enabled: "true"
-          ofelia.job-exec.get_today_games.schedule: "@0 30 8 * * *"
+          ofelia.job-exec.get_today_games.schedule: "0 30 8 * * *"
           ofelia.job-exec.get_today_games.command: "sh scripts/get_today_games.sh http://localhost:5000"
 
     scheduler:
-      image: mcuadros/ofelia:latest
-      depends_on:
-        - web
-      command: daemon --docker
-      volumes:
-        - /var/run/docker.sock:/var/run/docker.sock:ro
-
-  
+        image: mcuadros/ofelia:latest
+        depends_on:
+          - web
+        command: daemon --docker
+        env_file:
+          - .env
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+      
+volumes:
+  database-data:

@@ -11,9 +11,12 @@ services:
           - .env
         depends_on:
           - "db"
-        ofelia.enabled: "true"
-          ofelia.job-exec.get_today_games.schedule: "@0 30 8 * * *"
+        labels:
+          ofelia.enabled: "true"
+          ofelia.job-exec.get_today_games.schedule: "0 30 8 * * *"
           ofelia.job-exec.get_today_games.command: "sh scripts/get_today_games.sh https://balbol.herokuapp.com"
+          ofelia.job-exec.notify_games.schedule: "@every 1m"
+          ofelia.job-exec.notify_games.command: "sh scripts/notify_games.sh https://balbol.herokuapp.com"
 
 
     scheduler:
@@ -21,6 +24,8 @@ services:
       depends_on:
         - web
       command: daemon --docker
+      env_file:
+          - .env
       volumes:
         - /var/run/docker.sock:/var/run/docker.sock:ro
           
